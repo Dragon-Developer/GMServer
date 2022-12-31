@@ -1,8 +1,9 @@
 // Modules
 const WebSocketServer = require('ws');
+require('dotenv').config();
 
 // Create Server
-const wss = new WebSocketServer.Server({ port: 3000 });
+const wss = new WebSocketServer.Server({ port: process.env.PORT });
 
 wss.on("connection", ws => {
     
@@ -35,7 +36,7 @@ wss.on("connection", ws => {
     }
 });
 
-console.log("The WebSocket Server is running!");
+console.log(`The WebSocket Server is running at port ${process.env.PORT}!`);
 
 function handleMessage(ws, data) {
     switch (data.type) {
