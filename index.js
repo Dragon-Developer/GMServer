@@ -36,7 +36,7 @@ wss.on("connection", ws => {
     }
 });
 
-console.log(`The WebSocket Server is running at port ${process.env.PORT}!`);
+console.log(`The WebSocket Server is running!`);
 
 function handleMessage(ws, data) {
     switch (data.type) {
