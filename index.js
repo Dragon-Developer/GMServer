@@ -68,8 +68,7 @@ server.on("connection", client => {
 
         let clientIndex = server.clientList.indexOf(client);
         
-        if (client.player)
-            client.player.leave();
+        client.player?.leave();
         
         server.clientList.slice(clientIndex, 1);
         console.log(`A player has been disconnected! ID: ${client.id}`);
