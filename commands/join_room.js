@@ -12,7 +12,7 @@ module.exports = {
             });
         }
         // Cannot join the room again
-        if (room.players.includes(client.id)) {
+        if (client.player?.room === room) {
             return client.sendJSON({
                 type: "error",
                 text: "You have already joined this room!"
@@ -25,9 +25,9 @@ module.exports = {
                 text: `The room has reached the max number of players: ${room.limit}`
             });
         }
+        client.player?.leave();
         // Add player to the room
-        room.players.push(client.id);
-        client.roomID = room.id;
-        server.log(`Client ${client.id} joined room ${room.id}.`);
+        room.addPlayer(client);
+        server.log(`Client ${client.id} joined room ${room.id} (${room.name}).`);
     }
 }

@@ -38,25 +38,13 @@ for (const file of commandFiles) {
 server.on("connection", client => {
 
     client.id = server.clientID++;
-    client.roomID = -1;
-
+    client.player = null;
     server.clientList.push(client);
 
     // Send JSON data
     client.sendJSON = function (data) {
         client.send(JSON.stringify(data));
     };
-    
-    // Leave room
-    client.leaveRoom = function () {
-        if (client.roomID === -1) return;
-        let room = server.rooms.find(r => r.id == client.roomID);
-        if (room) {
-            let playerIndex = room.players.find(p => p.id == client.id);
-            room.players.splice(playerIndex, 1);
-            server.log(`Client ${client.id} left the room ${room.id}.`);
-        }
-    }
 
     // Connected
     console.log(`A new player has connected! ID: ${client.id}`);
@@ -80,23 +68,8 @@ server.on("connection", client => {
 
         let clientIndex = server.clientList.indexOf(client);
         
-        // If this player has created a room
-        let roomIndex = server.rooms.findIndex(r => r.ownerID == client.id);
-        // Notify all players that this room has been deleted
-        if (roomIndex != -1) {
-            let room = server.rooms[roomIndex];
-            server.rooms.splice(roomIndex, 1);
-            // Players in this room
-            let players = server.clientList.filter(c => c.id != client.id && room.players.includes(c.id));
-            players.forEach(player => {
-                player.sendJSON({
-                    type: "deleted_room"
-                });
-                player.roomID = -1;
-            })
-        }
-        
-        client.leaveRoom();
+        if (client.player)
+            client.player.leave();
         
         server.clientList.slice(clientIndex, 1);
         console.log(`A player has been disconnected! ID: ${client.id}`);
