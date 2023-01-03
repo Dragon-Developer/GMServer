@@ -45,6 +45,9 @@ server.on("connection", client => {
     client.sendJSON = function (data) {
         client.send(JSON.stringify(data));
     };
+    client.leaveRoom = function() {
+        client.player?.leave();
+    }
 
     // Connected
     console.log(`A new player has connected! ID: ${client.id}`);
@@ -67,8 +70,8 @@ server.on("connection", client => {
     client.on("close", () => {
 
         let clientIndex = server.clientList.indexOf(client);
-        
-        client.player?.leave();
+
+        client.leaveRoom();
         
         server.clientList.slice(clientIndex, 1);
         console.log(`A player has been disconnected! ID: ${client.id}`);

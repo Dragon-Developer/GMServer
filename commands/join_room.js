@@ -25,9 +25,15 @@ module.exports = {
                 text: `The room has reached the max number of players: ${room.limit}`
             });
         }
-        client.player?.leave();
+        client.leaveRoom();
         // Add player to the room
         room.addPlayer(client);
+        client.sendJSON({
+            type: "joined_room",
+            client_id: client.id,
+            x: client.player.x,
+            y: client.player.y
+        });
         server.log(`Client ${client.id} joined room ${room.id} (${room.name}).`);
     }
 }

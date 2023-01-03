@@ -29,8 +29,8 @@ module.exports = class Room {
         return this.getClients().map(c => this.getPlayer(client));
     }
     // Get clients in this room
-    getClients() {
-        return this.players.map(p => p.getClient());
+    getClients(exceptClientID = null) {
+        return this.players.map(p => p.getClient()).filter(c => c.id != exceptClientID);
     }
     // Get Player from Client
     getPlayer(client) {

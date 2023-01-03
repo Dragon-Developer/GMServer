@@ -16,7 +16,7 @@ module.exports = {
                 text: "You have already created a room!"
             });
         }
-        client.player?.leave();
+        client.leaveRoom();
         // Create room
         let room = new Room(server, client, data.name, parseInt(data.limit))
         server.rooms.push(room);
@@ -24,7 +24,9 @@ module.exports = {
         client.sendJSON({
             type: "created_room",
             id: room.id,
-            owner: client.id,
+            x: client.player.x,
+            y: client.player.y,
+            client_id: client.id,
             name: data.name,
             limit: data.limit
         });
