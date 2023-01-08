@@ -1,17 +1,19 @@
 // Modules
 require('dotenv').config();
-const WebSocketServer = require('ws');
+const WebSocket = require('ws');
 const path = require('path');
 const fs = require('fs');
 
 // Create Server
-const server = new WebSocketServer.Server({ port: process.env.PORT });
+const server = new WebSocket.Server({ port: process.env.PORT });
 server.rooms = [];
 server.roomID = 0;      // Increase by 1 when a room is created
 server.clientList = []; // List of Clients
 server.clientID = 0;    // Increase by 1 when a client connects
 server.room_limit = 10; // Limit of rooms at the same time
 server.log = (...x) => console.log(...x);
+server.clientConnectIndex = 0; // Index of next client to reconnect
+server.awaitingRequest = false; // Is the server waiting a request
 
 // Load Commands
 server.commands = {};
@@ -36,11 +38,11 @@ for (const file of commandFiles) {
 
 // New Connection
 server.on("connection", client => {
-
     client.id = server.clientID++;
     client.player = null;
     server.clientList.push(client);
-
+    server.awaitingRequest = false;
+  
     // Send JSON data
     client.sendJSON = function (data) {
         client.send(JSON.stringify(data));
@@ -73,7 +75,7 @@ server.on("connection", client => {
 
         client.leaveRoom();
         
-        server.clientList.slice(clientIndex, 1);
+        server.clientList.splice(clientIndex, 1);
         console.log(`A player has been disconnected! ID: ${client.id}`);
     });
 
@@ -84,3 +86,30 @@ server.on("connection", client => {
 });
 
 console.log(`The WebSocket Server is running!`);
+
+// Use this only if you need to keep the server online when there is a client
+function sendRequest() {
+  
+  let len = server.clientList.length;
+  let index = server.clientConnectIndex;
+  if (index >= len) index = 0;
+  if (len) {
+    server.awaitingRequest = true;
+    server.clientList[index].sendJSON({
+      type: "connect"
+    });
+    server.clientConnectIndex = (index + 1) % len;
+  }
+  setTimeout(() => {
+    if (server.awaitingRequest) {
+      sendRequest();
+    }
+  }, 5000);
+  
+}
+
+setInterval(() => {
+  if (server.clientList.length) 
+    sendRequest();
+}, 240000);
+
