@@ -5,7 +5,10 @@ module.exports = {
                 type: "player_state",
                 id: client.id,
                 x: data.x,
-                y: data.y    
+                y: data.y,
+                xscale: data.xscale,
+                sprite: data.sprite,
+                index: data.index  
             });
         });
     }
