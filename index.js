@@ -53,8 +53,8 @@ server.on("connection", (client, req) => {
 
     // Connected
     console.log(`A new player has connected! ID: ${client.id}`);
-    console.log("User-Agent: " + req.headers['user-agent']);
-    
+    console.log("Header: " + req.headers);
+
     // Receive message
     client.on("message", msg => {
         try {
