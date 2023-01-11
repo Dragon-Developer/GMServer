@@ -37,7 +37,7 @@ for (const file of commandFiles) {
 }
 
 // New Connection
-server.on("connection", client => {
+server.on("connection", (client, req) => {
     client.id = server.clientID++;
     client.player = null;
     server.clientList.push(client);
@@ -53,7 +53,8 @@ server.on("connection", client => {
 
     // Connected
     console.log(`A new player has connected! ID: ${client.id}`);
-
+    console.log("User-Agent: " + req.headers['user-agent']);
+    
     // Receive message
     client.on("message", msg => {
         try {
