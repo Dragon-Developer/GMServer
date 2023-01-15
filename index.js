@@ -5,16 +5,15 @@ const path = require('path');
 const fs = require('fs');
 
 // Create Server
-const server = new WebSocket.Server({ port: process.env.PORT });
+const server = new WebSocket.Server({ port: process.env.PORT || 3000});
 server.rooms = [];
 server.roomID = 0;      // Increase by 1 when a room is created
 server.clientList = []; // List of Clients
 server.clientID = 0;    // Increase by 1 when a client connects
 server.room_limit = 10; // Limit of rooms at the same time
 server.log = (...x) => console.log(...x);
-server.clientConnectIndex = 0; // Index of next client to reconnect
-server.awaitingRequest = false; // Is the server waiting a request
-
+server.clientConnectIndex = 0;
+server.awaitingRequest = false;
 // Load Commands
 server.commands = {};
 
@@ -37,14 +36,16 @@ for (const file of commandFiles) {
 }
 
 // New Connection
-server.on("connection", (client, req) => {
+server.on("connection", client => {
     client.id = server.clientID++;
     client.player = null;
+    client.frame = 0;
     server.clientList.push(client);
     server.awaitingRequest = false;
   
     // Send JSON data
     client.sendJSON = function (data) {
+        data.f = client.frame++; // GM HTML5 websocket doesn't guarantee order
         client.send(JSON.stringify(data));
     };
     client.leaveRoom = function() {
@@ -53,7 +54,6 @@ server.on("connection", (client, req) => {
 
     // Connected
     console.log(`A new player has connected! ID: ${client.id}`);
-    console.log("Header: " + req.headers);
 
     // Receive message
     client.on("message", msg => {
@@ -86,9 +86,18 @@ server.on("connection", (client, req) => {
     }
 });
 
+server.on('upgrade', (req, socket, upgradeHead) => {
+  let up = req.headers.upgrade; 
+  //console.log("Upgrade: " + up);
+  if (up.toLowerCase() === 'websocket') {
+    // handle the websocket connection
+    socket.handled = true;
+  }
+});
+
 console.log(`The WebSocket Server is running!`);
 
-// Use this only if you need to keep the server online when there is a client
+
 function sendRequest() {
   
   let len = server.clientList.length;

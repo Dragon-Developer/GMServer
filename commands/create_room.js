@@ -23,7 +23,7 @@ module.exports = {
         // Send room info to client
         client.sendJSON({
             type: "created_room",
-            id: room.id,
+            room_id: room.id,
             x: client.player.x,
             y: client.player.y,
             client_id: client.id,
