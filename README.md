@@ -1,5 +1,6 @@
-## GameMaker WebServer made with Node.js  
+## WebSocket Game Server made with Node.js  
 This is a multiplayer online game server that connects to a client made with GameMaker.  
+In fact, it also works with any other game engine, as long as the client sends and processes the data in a similar way..  
 
 ## Links
 HTML5: https://dragon-developer.github.io/game/gmclient/  
