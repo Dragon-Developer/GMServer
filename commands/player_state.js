@@ -4,7 +4,7 @@ module.exports = {
         client.player?.room.getClients(client.id).forEach(c => {
             c.sendJSON({
               type: "player_state",
-              ID: client.id,
+              id: client.id,
               x: data.x,
               y: data.y,
               xscale: data.xscale,
