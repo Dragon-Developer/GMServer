@@ -1,6 +1,10 @@
 ## GameMaker WebServer made with Node.js  
 This is a multiplayer online game server that connects to a client made with GameMaker.  
 
+## Links
+HTML5: https://dragon-developer.github.io/game/gmclient/  
+GMClient: https://github.com/Dragon-Developer/GMClient  
+
 ## Commands  
 Every client message contains a type attribute which is the command the server should execute.  
 **create_room:**  Create a game room  
